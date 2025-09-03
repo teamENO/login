@@ -2,15 +2,40 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>ログイン</title>
+  <title>ログイン画面</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>ログインフォーム</h2>
-  <input type="text" id="username" placeholder="ユーザー名">
-  <input type="password" id="password" placeholder="パスワード">
-  <button onclick="login()">ログイン</button>
-  <p id="result"></p>
+  <div class="login-container">
+    <h2>ようこそ</h2>
+    <p>安心してご利用ください</p>
+    <input type="text" id="userId" placeholder="ユーザーID">
+    <input type="password" id="password" placeholder="パスワード">
+    <button onclick="login()">ログイン</button>
+    <p id="message"></p>
+  </div>
 
-  <script src="login.js"></script>
+  <script>
+    async function login() {
+      const userId = document.getElementById("userId").value;
+      const password = document.getElementById("password").value;
+
+      const response = await fetch("<<Apps ScriptのWebアプリURL>>", {
+        method: "POST",
+        body: JSON.stringify({ userId, password }),
+        headers: { "Content-Type": "application/json" }
+      });
+
+      const result = await response.json();
+      const message = document.getElementById("message");
+      message.textContent = result.message;
+      message.style.color = result.success ? "green" : "red";
+
+      if (result.success) {
+        // 認証成功時の処理（例：画面遷移）
+        window.location.href = "dashboard.html";
+      }
+    }
+  </script>
 </body>
 </html>
