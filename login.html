@@ -1,9 +1,157 @@
-<input id="uid" placeholder="User ID">
-<input id="pw" placeholder="Password" type="password">
-<button onclick="login()">Login</button>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"> <!-- スマホ対応 -->
+<title>ログイン</title>
+
+<!-- Apple系フォント -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f5f5f7;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* カード */
+.login-card {
+  background: #fff;
+  width: 360px;
+  padding: 40px;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+/* スマホ対応：画面幅が狭いときは縮める */
+@media (max-width: 480px) {
+  .login-card {
+    width: 90%;
+    padding: 28px;
+    border-radius: 14px;
+  }
+}
+
+.login-card h2 {
+  margin-bottom: 30px;
+  font-weight: 600;
+  color: #111;
+}
+
+/* 入力欄 */
+input {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border: 1px solid #d2d2d7;
+  border-radius: 10px;
+  font-size: 16px;
+  background: #fafafa;
+  transition: border 0.2s;
+}
+
+input:focus {
+  border-color: #007aff;
+  outline: none;
+}
+
+/* エラーメッセージ */
+#error-message {
+  margin-top: -8px;
+  margin-bottom: 16px;
+  color: #ff3b30;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  min-height: 20px;
+}
+
+/* ボタン */
+button {
+  width: 100%;
+  padding: 14px;
+  background: #007aff;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #0063cc;
+}
+
+/* 認証中の画面 */
+#loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+  font-size: 26px;
+  z-index: 999999;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#loading.show {
+  display: flex;
+}
+
+.pulse {
+  margin-top: 20px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 1; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="login-card">
+  <h2>ログイン</h2>
+
+  <input id="uid" placeholder="User ID">
+  <input id="pw" placeholder="Password" type="password">
+
+  <div id="error-message"></div>
+
+  <button onclick="login()">ログイン</button>
+</div>
+
+<div id="loading">
+  認証中…
+  <div class="pulse"></div>
+</div>
 
 <script>
 async function login() {
+
+  document.getElementById("loading").classList.add("show");
+
   const user_id = document.getElementById("uid").value;
   const password = document.getElementById("pw").value;
 
@@ -14,11 +162,19 @@ async function login() {
 
   const data = await res.json();
 
+  document.getElementById("loading").classList.remove("show");
+
+  const errorBox = document.getElementById("error-message");
+
   if (data.success) {
+    errorBox.textContent = "";
     localStorage.setItem("token", data.token);
-    alert("ログイン成功: " + data.name);
+    window.location.href = "home.html";
   } else {
-    alert("ログイン失敗: " + data.error);
+    errorBox.textContent = data.error || "ユーザーIDまたはパスワードが違います";
   }
 }
 </script>
+
+</body>
+</html>
