@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ホーム</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f5f5f7;
+  margin: 0;
+  padding: 20px;
+}
+
+/* 上部のユーザー情報カード */
+.user-card {
+  background: #fff;
+  padding: 24px;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+}
+
+.user-card h2 {
+  margin: 0 0 10px;
+  font-weight: 600;
+  color: #111;
+}
+
+.user-card p {
+  margin: 4px 0;
+  color: #555;
+  font-size: 15px;
+}
+
+/* メニューカード */
+.menu-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.menu-card:hover {
+  transform: translateY(-3px);
+}
+
+.menu-card h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: #111;
+}
+
+.menu-card p {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: #666;
+}
+
+/* ログアウトボタン */
+.logout-btn {
+  width: 100%;
+  padding: 14px;
+  background: #ff3b30;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.logout-btn:hover {
+  background: #d92a22;
+}
+</style>
+</head>
+
+<body>
+
+<div class="user-card">
+  <h2 id="username">読み込み中…</h2>
+  <p id="role">role: 読み込み中…</p>
+</div>
+
+<!-- 通常メニュー -->
+<div class="menu-card" onclick="location.href='qr.html'">
+  <h3>QR 出席管理</h3>
+  <p>QRコードを読み取って出席登録</p>
+</div>
+
+<div class="menu-card" onclick="location.href='profile.html'">
+  <h3>プロフィール</h3>
+  <p>アカウント情報を確認</p>
+</div>
+
+<!-- 管理者メニュー（admin のときだけ表示） -->
+<div id="admin-menu" style="display:none;">
+  <div class="menu-card" onclick="location.href='admin.html'">
+    <h3>管理者ページ</h3>
+    <p>ユーザー管理・出席データ管理</p>
+  </div>
+
+  <div class="menu-card" onclick="location.href='admin-settings.html'">
+    <h3>システム設定</h3>
+    <p>アプリの設定を変更</p>
+  </div>
+</div>
+
+<button class="logout-btn" onclick="logout()">ログアウト</button>
+
+<script>
+async function loadUser() {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    location.href = "login.html";
+    return;
+  }
+
+  // GAS に token を送ってユーザー情報を取得
+  const res = await fetch("YOUR_GAS_WEBAPP_URL", {
+    method: "POST",
+    body: JSON.stringify({ token })
+  });
+
+  const data = await res.json();
+
+  if (!data.success) {
+    location.href = "login.html";
+    return;
+  }
+
+  // ユーザー情報を表示
+  document.getElementById("username").textContent = data.name + " さん";
+  document.getElementById("role").textContent = "role: " + data.role;
+
+  // admin のときだけ管理者メニューを表示
+  if (data.role === "admin") {
+    document.getElementById("admin-menu").style.display = "block";
+  }
+}
+
+function logout() {
+  localStorage.removeItem("token");
+  location.href = "login.html";
+}
+
+loadUser();
+</script>
+
+</body>
+</html>
