@@ -127,7 +127,7 @@ async function loadUser() {
   }
 
   // GAS に token を送ってユーザー情報を取得
-  const res = await fetch("YOUR_GAS_WEBAPP_URL", {
+  const res = await fetch("https://script.google.com/macros/s/AKfycbwxWh5nEf0robEEaSfZ1wZEKI6FC0BOL-fOAnqJzhvyUlvgkqA2fklTbvZogsNrsJYZLg/exec", {
     method: "POST",
     body: JSON.stringify({ token })
   });
